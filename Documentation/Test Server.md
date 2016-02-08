@@ -34,6 +34,35 @@ Notes on configuring a the Raspberry PI that is controlling this stuff.
         #!/bin/sh
         /sbin/iptables-restore < /etc/iptables.up.rules
 
+### security updates
+
+[https://wiki.debian.org/UnattendedUpgrades](ref)
+
+        apt-get install unattended-upgrades
+
+In ``/etc/apt/apt.conf.d/50unattended-upgrades`` uncomment 
+
+        Unattended-Upgrade::Origins-Pattern {
+                // Codename based matching:
+                // This will follow the migration of a release through different
+                // archives (e.g. from testing to stable and later oldstable).
+                "o=Raspbian,n=jessie";
+        }
+
+Make ` /etc/apt/apt.conf.d/20auto-upgrades` look like:
+
+        APT::Periodic::Update-Package-Lists "1";
+        APT::Periodic::Unattended-Upgrade "1";
+
+Make `/etc/apt/apt.conf.d/02periodic` look like:
+
+        APT::Periodic::Enable "1";
+        APT::Periodic::Update-Package-Lists "1";
+        APT::Periodic::Download-Upgradeable-Packages "1";
+        APT::Periodic::Unattended-Upgrade "1";
+        APT::Periodic::AutocleanInterval "21";
+        APT::Periodic::Verbose "2";
+
 ### users
 
 - setup sudo to allow nopasswd sudo to root:
