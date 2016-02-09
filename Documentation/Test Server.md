@@ -6,7 +6,7 @@ Notes on configuring a the Raspberry PI that is controlling this stuff.
 - Flash to SD Card per https://www.raspberrypi.org/documentation/installation/installing-images/README.md
 - `sudo apt-get update && apt-get dist-upgrade`
 - `sudo raspi-config` -> expand file system
-- `sudo apt-get install git vim`
+- `sudo apt-get install git vim tcpdump`
 
 ### basic network
 

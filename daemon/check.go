@@ -1,5 +1,7 @@
 package main
 
+// env GOARM=7 GOOS=linux GOARCH=arm go build -o check.arm7 ./daemon/check.go && scp check.arm7 lobupanet:bin/check
+
 import (
 	"bytes"
 	"encoding/json"
@@ -20,8 +22,8 @@ type StationInfo struct {
 	LastIP     string            `json:"lastip"`
 	AssocID    int               `json:"associd"`
 	APRepeater int               `json:"aprepeater"`
-	Tx         int               `json:"tx"`
-	Rx         int               `json:"rx"`
+	Tx         float64           `json:"tx"`
+	Rx         float64           `json:"rx"`
 	Signal     int               `json:"signal"`
 	CCQ        int               `json:"ccq"`
 	Idle       int               `json:"idle"`
@@ -152,9 +154,9 @@ func main() {
 		}
 
 		for _, stationInfo := range stationsInfo {
-			fmt.Fprintf(stats, "TX,ap=%s,station=%s value=%d %d\n",
+			fmt.Fprintf(stats, "TX,ap=%s,station=%s value=%f %d\n",
 				*accessPoint, stationInfo.Name, stationInfo.Tx, now)
-			fmt.Fprintf(stats, "RX,ap=%s,station=%s value=%d %d\n",
+			fmt.Fprintf(stats, "RX,ap=%s,station=%s value=%f %d\n",
 				*accessPoint, stationInfo.Name, stationInfo.Rx, now)
 			fmt.Fprintf(stats, "Signal,ap=%s,station=%s value=%d %d\n",
 				*accessPoint, stationInfo.Name, stationInfo.Signal, now)
