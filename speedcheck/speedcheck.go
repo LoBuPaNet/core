@@ -1,6 +1,9 @@
 package main
 
-// env GOARM=7 GOOS=linux GOARCH=arm go build -o check.arm7 ./daemon/check.go && scp check.arm7 lobupanet:bin/check
+// This program checks the speed and quality of a link and pushes those
+// stats to InfluxDB for posterity. The link stats are from invoking
+// the `wstalist` command on the access point. The speed test comes from
+// invoking `speedtest` between the specified access point and station.
 
 import (
 	"bytes"
@@ -139,6 +142,7 @@ func main() {
 	doSpeedTest := flag.Bool("speed-test", true, "do link speed test")
 	influxURL := flag.String("influx-url", "http://localhost:8086", "The base URL to influx DB")
 	influxDBName := flag.String("influx-db", "mydb", "The base URL to influx DB")
+	doPrintOnly := flag.Bool("print", false, "don't insert stats to influx, print them to the console")
 	flag.Parse()
 
 	if *stationIP == "" {
@@ -195,6 +199,11 @@ func main() {
 			*accessPoint, *station, speedTestResult.RxRate, now)
 		fmt.Fprintf(stats, "TxSpeedTest,ap=%s,station=%s value=%f %d\n",
 			*accessPoint, *station, speedTestResult.TxRate, now)
+	}
+
+	if !*doPrintOnly {
+		os.Stdout.Write(stats.Bytes())
+		return
 	}
 
 	req, err := http.NewRequest("POST",
