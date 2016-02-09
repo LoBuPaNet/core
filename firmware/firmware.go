@@ -65,19 +65,19 @@ func UpgradeFirmware(deviceAddress string) error {
 	if err := cmd.Run(); err != nil {
 		return err
 	}
-	sysID := ""
+	boardID := ""
 	scanner := bufio.NewScanner(bytes.NewReader(output.Bytes()))
 	for scanner.Scan() {
 		if strings.HasPrefix(scanner.Text(), "$board_id=") {
-			sysID = strings.SplitN(scanner.Text(), "=", 2)[1]
-			sysID = strings.Trim(sysID, "\";")
+			boardID = strings.SplitN(scanner.Text(), "=", 2)[1]
+			boardID = strings.Trim(boardID, "\";")
 		}
 	}
-	log.Printf("device id is %q", sysID)
+	log.Printf("device id is %q", boardID)
 
-	log.Printf("checking if version %s is the latest for device %s", version, sysID)
+	log.Printf("checking if version %s is the latest for device %s", version, boardID)
 	values := url.Values{}
-	values.Set("sysid", sysID)
+	values.Set("sysid", boardID)
 	values.Set("fwver", version)
 	resp, err := http.Get("http://www.ubnt.com/update/check.php?" + values.Encode())
 	if err != nil {
