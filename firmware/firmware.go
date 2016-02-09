@@ -1,7 +1,6 @@
+// This program updates the firmware on the specified device to the latest
+// available firmware from the vendor.
 package main
-
-// compile:
-// env GOARM=7 GOOS=linux GOARCH=arm go build -o firmware.arm7 ./firmware/firmware.go
 
 import (
 	"bufio"
@@ -19,29 +18,10 @@ import (
 	"strings"
 )
 
-/*
-version=$(cat /usr/lib/version)
-sysid=$(cat /etc/board.inc | grep 'board_id=' | cut -d" -f2)  # '$board_id="0xe009";'
-
-wget -O fw.json http://www.ubnt.com/update/check.php\?sysid\=$sysid\&fwver\=$version
-
-    response: {
-    "url": "http://dl.ubnt.com/firmwares/XN-fw/v5.6.3/XM.v5.6.3.28591.151130.1749.bin",
-    "checksum": "26be1e137bd1991c570a70ae7beee19f", "update": "true",
-    "version": "v5.6.3", "date": "151130", "security": ""}
-
-or:
-
-    {"update": "false"}
-
-wget -O fw.bin $(jq -r .url < fw.json)
-scp fw.bin ubnt@192.168.1.30:/tmp/fwupdate.bin
-
-ssh ubnt@192.168.1.30 /sbin/fwupdate -m
-*/
-
 const defaultUsername = "ubnt"
 
+// Status represents the response we get back from the ubnt
+// firmware upgrade check service.
 type Status struct {
 	URL      string `json:"url"`
 	Checksum string `json:"checksum"`
@@ -59,6 +39,8 @@ func main() {
 	}
 }
 
+// UpgradeFirmware upgrades the firmware on the specified device to the
+// latest available.
 func UpgradeFirmware(deviceAddress string) error {
 	log.Printf("getting current firmware version")
 	output := bytes.NewBuffer(nil)
