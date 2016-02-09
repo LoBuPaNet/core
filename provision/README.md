@@ -5,6 +5,9 @@ Plug in the device and run:
 
     provision --name StLocation1 --ip 192.168.1.31
 
+Note: until the tool is updated, you'll have to manually select the 
+wireless mode for the -ac devices. Select `Station PTMP` (point-to-multipoint)
+
 # Provisioning an Access Point
 
 Plug in the device and run:
