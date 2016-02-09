@@ -1,9 +1,20 @@
 package main
 
-// compile:
-// env GOARM=7 GOOS=linux GOARCH=arm go build -o provision.arm7 ./provision/provision.go
-
+// This program provisions a new device. When devices come from the factory
+// they are configured to have the address 192.168.1.20. This program watches
+// for the device on that IP or on the IP you specify. It modifies the running
+// configuration with our settings, saves them to the flash memory and reboots
+// the device into the new configuration.
+//
+// In general it is safe to reprovision an existing device as this program
+// changes or if the device configuration drifts.
+//
+// This program requires the following third party programs: sshpass, ssh, ping
+//
 // TODO(ross): this doesn't change the password, and it should.
+// TODO(ross): configure syslog on devices
+// TODO(ross): configure ntp on devices
+// TODO(ross): a dry-run mode that shows what configuration would change would be nice.
 
 import (
 	"bufio"
@@ -17,6 +28,10 @@ import (
 	"strings"
 	"time"
 )
+
+const defaultAddress = "192.168.1.20" // the default address for new devices
+const defaultPassword = "ubnt"
+const defaultUsername = "ubnt"
 
 func main() {
 	name := flag.String("name", "", "device name")
@@ -33,10 +48,6 @@ func main() {
 		os.Exit(1)
 	}
 }
-
-const defaultAddress = "192.168.1.20" // the default address for new devices
-const defaultPassword = "ubnt"
-const defaultUsername = "ubnt"
 
 // Provision configures a unifi device
 func Provision(name, ip string) error {
