@@ -110,6 +110,9 @@ func Provision(name, ip string) error {
 	//config["sshd.auth.passwd"] = "disabled"
 	//config["ntpclient.status"] = "enabled"
 	config["netconf.3.ip"] = ip
+	// TODO(ross): set the appropriate output power.
+	// On the M900 max is + 27dbm output port
+	// config["radio.1.txpower"] = "28"
 
 	log.Printf("copying new configuration to device")
 	cmd = exec.Command("sshpass", "-p", defaultPassword,
